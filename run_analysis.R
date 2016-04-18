@@ -1,29 +1,51 @@
 
-# set up working directios
+#####################################################################################
+# Assignmet for Week 4, Clean and Tidy Data
+# Data: April 18, 2016
+#####################################################################################
+
+library(dplyr)
+
+# set up working directiories
 setwd("~/Documents/classes/Data Science/Getting and Cleaning Data/UCI HAR Dataset/")
 
-# train data files
+# 4. Appropriately labels the data set with descriptive variable names.
+# load the feature names to be used during the data loads - makes it easier
+x_feature_file <- "features.txt";
+x_feature_df <- read.delim(x_feature_file,sep="",header = FALSE, stringsAsFactors = FALSE,col.names = c("num","feature") )
+
+
+# load train data files with column names from the features file
 x_train_file <- "train/X_train.txt";
-x_train_df <- read.delim(x_train_file)
+x_train_df <- read.delim(x_train_file,sep="",header = FALSE, stringsAsFactors = FALSE, col.names = x_feature_df$feature)
+y_train <- "train/y_train.txt";
+y_train_df <- read.delim(y_train, header = FALSE, stringsAsFactors = FALSE, col.names=c("activity"));
 
-x_train_label <- "train/y_train.txt";
-x_train_label_df <- read.delim(x_train_label);
-x_y_train_df <- cbind(x_train_df, x_train_label_df);
+# append activity column to train data
+x_y_train_df <- cbind(y_train_df, x_train_df);
 
-# test data files
+# load test data files
 x_test_file <- "test/X_test.txt"
-x_test_df <- read.delim(x_test_file)
+x_test_df <- read.delim(x_test_file, sep="", header = FALSE, stringsAsFactors = FALSE, col.names = x_feature_df$feature)
+y_test <- "test/y_test.txt"
+y_test_df <- read.delim(y_test, header = FALSE, stringsAsFactors = FALSE, col.names=c("activity"))
 
-x_test_label <- "test/y_test.txt"
-x_test_label_df <- read.delim(x_test_label)
-x_y_test_df <- cbind(x_train_df, x_train_label_df);
+# append activity column to test data
+x_y_test_df <- cbind(y_test_df, x_test_df);
 
-# activity labels
+# 1. Merges the training and the test sets to create one data set.
+x_y_df <- rbind(x_y_test_df, x_y_train_df)
+
+# 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+cols_mean_std <- grep("[Mm]ean|[Ss]td",names(x_y_df), value = TRUE)
+# don't drop the activity column
+cols_mean_std <- c("activity",cols_mean_std)
+x_y_df <- x_y_df[,cols_mean_std]
+
+# 3. Uses descriptive activity names to name the activities in the data set
 activity_labels_file <- "activity_labels.txt"
-activity_labels_df <- read.delim(activity_labels_file)
-
-
-#x_df <- rbind(x_test_df, x_train_df)
+activity_labels_df <- read.delim(activity_labels_file, sep="", header = FALSE, stringsAsFactors = FALSE, col.names = c("num","description"))
+x_y_df <- mutate(x_y_df, activity= activity_labels_df[x_y_df$activity,2])
 
 
 
