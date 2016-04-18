@@ -50,4 +50,8 @@ x_y_df <- mutate(x_y_df, activity= activity_labels_df[x_y_df$activity,2])
 x_y_by_activity_df <- group_by(x_y_df, activity)
 x_y_activity_summary <- summarise_each(x_y_by_activity_df,funs(mean))
 
+# write data to files
+write.csv(x_y_df, file="step1-4.csv")
+write.csv(x_y_activity_summary, file="step5.csv")
+
 
