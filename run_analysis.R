@@ -46,6 +46,7 @@ activity_labels_file <- "activity_labels.txt"
 activity_labels_df <- read.delim(activity_labels_file, sep="", header = FALSE, stringsAsFactors = FALSE, col.names = c("num","description"))
 x_y_df <- mutate(x_y_df, activity= activity_labels_df[x_y_df$activity,2])
 
+# 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 x_y_by_activity_df <- group_by(x_y_df, activity)
 x_y_activity_summary <- summarise_each(x_y_by_activity_df,funs(mean))
 
